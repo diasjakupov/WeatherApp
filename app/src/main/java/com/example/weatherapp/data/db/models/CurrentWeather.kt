@@ -29,8 +29,6 @@ data class CurrentWeather(
     val feelslike: Double,
     @SerializedName("is_day")
     val isDay: String,
-    @SerializedName("observation_time")
-    val observationTime: String,
     val precip: Double,
     val pressure: Double,
     val temperature: Double,

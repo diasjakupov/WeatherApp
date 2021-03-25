@@ -6,6 +6,7 @@ import com.example.weatherapp.data.db.RoomDb
 import com.example.weatherapp.data.network.*
 import com.example.weatherapp.data.repository.Repository
 import com.example.weatherapp.data.repository.RepositoryInterface
+import com.example.weatherapp.ui.weather.current.CurrentWeatherViewModelFactory
 import com.jakewharton.threetenabp.AndroidThreeTen
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -24,6 +25,7 @@ class MyApplication() : MultiDexApplication(), KodeinAware {
         bind() from singleton { WeatherApiBuilder.createRetrofit(instance()) }
         bind<ApiServiceI>() with singleton { ApiServiceDataSource(instance()) }
         bind<RepositoryInterface>() with singleton { Repository(instance(), instance()) }
+        bind() from singleton { CurrentWeatherViewModelFactory(instance()) }
     }
 
     override fun onCreate() {

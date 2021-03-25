@@ -33,7 +33,6 @@ class Repository(
             currentWeatherDao.insert(weatherResponse.currentWeather)
         }
     }
-    
 
     private suspend fun initCurrentWeather(system: UnitSystem){
         if(isNeededToFetch(ZonedDateTime.now().minusHours(1)))
