@@ -13,6 +13,7 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.androidXModule
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
+import org.kodein.di.generic.provider
 import org.kodein.di.generic.singleton
 
 class MyApplication() : MultiDexApplication(), KodeinAware {
@@ -25,7 +26,7 @@ class MyApplication() : MultiDexApplication(), KodeinAware {
         bind() from singleton { WeatherApiBuilder.createRetrofit(instance()) }
         bind<ApiServiceI>() with singleton { ApiServiceDataSource(instance()) }
         bind<RepositoryInterface>() with singleton { Repository(instance(), instance()) }
-        bind() from singleton { CurrentWeatherViewModelFactory(instance()) }
+        bind() from provider { CurrentWeatherViewModelFactory(instance()) }
     }
 
     override fun onCreate() {
