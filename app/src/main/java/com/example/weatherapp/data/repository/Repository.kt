@@ -40,7 +40,7 @@ class Repository(
     }
 
     private suspend fun fetchCurrentWeather(system: UnitSystem){
-        dataSource.fetchCurrentWeather("Pavlodar", checkUnitSystem(system))
+        dataSource.fetchCurrentWeather("Los Angeles", checkUnitSystem(system))
     }
 
     private fun checkUnitSystem(system: UnitSystem): Char{

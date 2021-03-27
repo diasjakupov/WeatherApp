@@ -8,7 +8,8 @@ import com.example.weatherapp.data.repository.UnitSystem
 import com.example.weatherapp.data.utils.lazyDeferred
 
 class CurrentWeatherViewModel(private val repo:Repository) : ViewModel() {
-    private val unitSystem=UnitSystem.METRIC
+    val unitSystem=UnitSystem.METRIC
+
 
     val weather by lazyDeferred {
         repo.getCurrentWeather(unitSystem)
