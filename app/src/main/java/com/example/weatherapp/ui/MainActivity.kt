@@ -1,21 +1,19 @@
 package com.example.weatherapp.ui
 
 
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.example.weatherapp.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import kotlinx.coroutines.*
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), setNavigartionTitle {
     private lateinit var navController:NavController
     private lateinit var bottomNav: BottomNavigationView
     private lateinit var toolbar: Toolbar
@@ -32,7 +30,6 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         NavigationUI.setupActionBarWithNavController(this, navController)
 
-
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -40,4 +37,8 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    override fun changeNavigationtitle(title:String, subTitle:String?) {
+        supportActionBar?.title = title
+        supportActionBar?.subtitle = subTitle
+    }
 }

@@ -21,7 +21,7 @@ object WeatherApiBuilder {
             val url=it.request()
                     .url()
                     .newBuilder()
-                    .addQueryParameter("access_key", API_KEY)
+                    .addQueryParameter("appid", API_KEY)
                     .build()
             val request=it.request()
                     .newBuilder()
@@ -36,7 +36,7 @@ object WeatherApiBuilder {
                 .build()
 
         return Retrofit.Builder()
-                .baseUrl("http://api.weatherstack.com/")
+                .baseUrl("http://api.openweathermap.org/data/2.5/")
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(CoroutineCallAdapterFactory())

@@ -3,7 +3,6 @@ package com.example.weatherapp.data.network
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.weatherapp.data.db.models.CurrentWeather
 import com.example.weatherapp.data.exceptions.ConnectivityException
 
 class ApiServiceDataSource(
@@ -14,7 +13,7 @@ class ApiServiceDataSource(
         get() = _downloadedCurrentWeather
 
 
-    override suspend fun fetchCurrentWeather(location: String, unitSystem:Char) {
+    override suspend fun fetchCurrentWeather(location: String, unitSystem:String) {
         try {
             val currentWeather=service.getCurrentWeather(location, unitSystem).await()
             _downloadedCurrentWeather.postValue(currentWeather)

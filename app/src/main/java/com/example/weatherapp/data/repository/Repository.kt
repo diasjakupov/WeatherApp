@@ -2,16 +2,15 @@ package com.example.weatherapp.data.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
-import com.example.weatherapp.data.db.dao.CurrentWeatherDao
+import com.example.weatherapp.data.db.dao.CurrentWeatherDescDao
 import com.example.weatherapp.data.db.models.CurrentWeather
-import com.example.weatherapp.data.network.ApiServiceDataSource
 import com.example.weatherapp.data.network.ApiServiceI
 import com.example.weatherapp.data.network.CurrentWeatherResponse
 import kotlinx.coroutines.*
 import org.threeten.bp.ZonedDateTime
 
 class Repository(
-        private val currentWeatherDao: CurrentWeatherDao,
+        private val currentWeatherDao: CurrentWeatherDescDao,
         private val dataSource: ApiServiceI
 ) : RepositoryInterface {
 
@@ -30,7 +29,12 @@ class Repository(
 
     private fun saveCurrentWeather(weatherResponse: CurrentWeatherResponse){
         GlobalScope.launch(Dispatchers.IO){
-            currentWeatherDao.insert(weatherResponse.currentWeather)
+            val currentWeather=CurrentWeather(
+                    weatherResponse.wind,
+                    weatherResponse.main,
+                    weatherResponse.weather.first().description,
+                    weatherResponse.weather.first().icon)
+            currentWeatherDao.insert(currentWeather)
         }
     }
 
@@ -40,13 +44,13 @@ class Repository(
     }
 
     private suspend fun fetchCurrentWeather(system: UnitSystem){
-        dataSource.fetchCurrentWeather("Los Angeles", checkUnitSystem(system))
+        dataSource.fetchCurrentWeather("Pavlodar", checkUnitSystem(system))
     }
 
-    private fun checkUnitSystem(system: UnitSystem): Char{
+    private fun checkUnitSystem(system: UnitSystem): String{
         return when(system){
-            UnitSystem.METRIC->'m'
-            UnitSystem.IMPERIAL->'f'
+            UnitSystem.METRIC->"metric"
+            UnitSystem.IMPERIAL->"imperial"
         }
     }
 

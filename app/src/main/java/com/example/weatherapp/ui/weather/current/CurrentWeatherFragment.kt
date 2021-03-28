@@ -2,36 +2,31 @@ package com.example.weatherapp.ui.weather.current
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
-import android.graphics.Color
-import android.graphics.ColorSpace
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.bumptech.glide.load.engine.Resource
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.example.weatherapp.R
 import com.example.weatherapp.data.network.GlideApp
 import com.example.weatherapp.data.repository.UnitSystem
 import com.example.weatherapp.ui.LoadingFragment
-import kotlinx.coroutines.Dispatchers
+import com.example.weatherapp.ui.setNavigartionTitle
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.closestKodein
 import org.kodein.di.generic.instance
+import java.util.*
 import kotlin.math.roundToInt
 
 class CurrentWeatherFragment() : Fragment(), KodeinAware {
@@ -88,43 +83,19 @@ class CurrentWeatherFragment() : Fragment(), KodeinAware {
         currentWeather.observe(viewLifecycleOwner, {
             if(it != null){
                 removeLoadingFragment()
-                updateDesc(it.weatherDescriptions.first())
-                updatePrecip(it.precip)
-                updatePressure(it.pressure)
-                updateTemperature(it.temperature, it.feelslike)
-                updateWind(it.windSpeed, it.windDir)
-                getBitMapIcon(it.weatherIcons.first())
+                updateDesc(it.description)
+                updateHumidity(it.main.humidity)
+                updatePressure(it.main.pressure)
+                updateTemperature(it.main.temp, it.main.feelsLike)
+                updateWind(it.wind.speed)
+                getBitMapIcon("http://openweathermap.org/img/wn/${it.icon}@2x.png")
             }
         })
     }
     private fun getBitMapIcon(url:String){
         GlideApp.with(this@CurrentWeatherFragment)
-                .asBitmap()
                 .load(url)
-                .into(object: CustomTarget<Bitmap>() {
-                    @SuppressLint("UseCompatLoadingForDrawables")
-                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                        val pixel=resource.getPixel(1, 1)
-                        bgCurrent.setBackgroundColor(pixel)
-                        icon.setImageBitmap(resource)
-//                        val width=resource.width
-//                        val height=resource.height
-//                        val newBitmap=Bitmap.createBitmap(resource)
-//                        val bgcolor=newBitmap.getPixel(1, 1)
-//                        for(i in (0 until width)){
-//                            for(j in (0 until height)){
-//                                val pixel=newBitmap.getPixel(i, j)
-//                                if(pixel==bgcolor){
-//                                    newBitmap.setPixel(i, j, Color.WHITE)
-//                                }
-//                            }
-//                        }
-//                        icon.setImageBitmap(newBitmap)
-                    }
-
-                    override fun onLoadCleared(placeholder: Drawable?) {}
-
-                })
+                .into(icon)
     }
 
 
@@ -149,9 +120,7 @@ class CurrentWeatherFragment() : Fragment(), KodeinAware {
     }
 
     private fun updateActionBar(location:String, subTitle:String){
-        val toolbar=(activity as AppCompatActivity).supportActionBar
-        toolbar?.title=location
-        toolbar?.subtitle=subTitle
+        (activity as setNavigartionTitle).changeNavigationtitle(location, subTitle)
     }
 
     @SuppressLint("SetTextI18n")
@@ -162,19 +131,18 @@ class CurrentWeatherFragment() : Fragment(), KodeinAware {
     }
 
     private fun updateDesc(desc:String){
-        weatherDesc.text=desc
+        weatherDesc.text = desc.capitalize(Locale.ROOT)
     }
 
     @SuppressLint("SetTextI18n")
-    private fun updateWind(windSpeed:Double, direction:String){
+    private fun updateWind(windSpeed: Double){
         val system=getUnitSystem("km/h", "mph")
-        wind.text="Wind:$direction $windSpeed$system"
+        wind.text="Wind:$windSpeed$system"
     }
 
     @SuppressLint("SetTextI18n")
-    private fun updatePrecip(prec: Double){
-        val system=getUnitSystem("mm", "in")
-        precipitation.text="Precipitation: $prec $system"
+    private fun updateHumidity(humidity: Double){
+        precipitation.text="Humidity: $humidity%"
     }
 
     @SuppressLint("SetTextI18n")
