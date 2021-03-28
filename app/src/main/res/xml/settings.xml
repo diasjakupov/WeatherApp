@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="General">
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="USE_LOCATION"
+            android:title="Use device location"
+            android:summary="Allow the app to track your device location"
+            android:disableDependentsState="true"/>
+
+        <EditTextPreference
+            android:defaultValue="Pavlodar"
+            android:dependency="USE_LOCATION"
+            android:key="CUSTOM_LOCATION"
+            android:summary="Type the location which will be used to get forecast weather"
+            android:title="Location" />
+
+        <ListPreference android:title="Unit System"
+            android:key="UNIT_SYSTEM"
+            android:entries="@array/unitSystemEntries"
+            android:entryValues="@array/unitSystemValues"
+            android:defaultValue="METRIC"
+            android:summary="Choose the unit system"/>
+    </PreferenceCategory>
+</PreferenceScreen>
