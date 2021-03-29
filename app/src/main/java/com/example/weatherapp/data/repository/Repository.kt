@@ -1,5 +1,6 @@
 package com.example.weatherapp.data.repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
 import com.example.weatherapp.data.db.dao.CurrentWeatherDescDao
@@ -45,6 +46,7 @@ class Repository(
                     weatherResponse.main,
                     weatherResponse.weather.first().description,
                     weatherResponse.weather.first().icon)
+
             currentWeatherDao.insert(currentWeather)
             val weatherLocation=WeatherLocation(
                     weatherResponse.name,
@@ -54,17 +56,21 @@ class Repository(
                     weatherResponse.sys.sunrise,
                     weatherResponse.timezone
                 )
+            println(weatherLocation)
             weatherLocationDao.insert(weatherLocation)
         }
     }
 
     private suspend fun initCurrentWeather(system: UnitSystem){
-        val lastLocation=weatherLocationDao.getCurrentLocationFromDb().value
+        val lastLocation=weatherLocationDao.getCurrentLocationNonLiveFromDb()
+
 
         if (lastLocation==null || locationProvider.hasLocationChanged(lastLocation)){
             fetchCurrentWeather(system)
             return
         }
+
+
         if(isNeededToFetch(lastLocation.zonedTime))
             fetchCurrentWeather(system)
     }
