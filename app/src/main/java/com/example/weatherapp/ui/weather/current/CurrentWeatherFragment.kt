@@ -78,8 +78,16 @@ class CurrentWeatherFragment() : Fragment(), KodeinAware {
         setLoadingFragment()
 
         val currentWeather=viewModel.weather.await()
+        val weatherLocation=viewModel.location.await()
 
-        updateActionBar("Pavlodar", "Today")
+        weatherLocation.observe(viewLifecycleOwner, {
+            if(it != null){
+                updateActionBar(it.name, "Today")
+            }
+
+        })
+
+
         currentWeather.observe(viewLifecycleOwner, {
             if(it != null){
                 removeLoadingFragment()

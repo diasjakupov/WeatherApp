@@ -13,6 +13,6 @@ interface WeatherApi {
     @GET("weather")
     fun getCurrentWeather(@Query("q") city:String,
                             @Query("units") metric:String="metric",
-    @Query("lang") lang:String="ru"):
+    @Query("lang") lang:String="en"):
             Deferred<CurrentWeatherResponse>
 }

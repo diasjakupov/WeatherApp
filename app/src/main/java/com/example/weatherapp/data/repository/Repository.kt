@@ -3,15 +3,20 @@ package com.example.weatherapp.data.repository
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
 import com.example.weatherapp.data.db.dao.CurrentWeatherDescDao
+import com.example.weatherapp.data.db.dao.WeatherLocationDao
 import com.example.weatherapp.data.db.models.CurrentWeather
+import com.example.weatherapp.data.db.models.WeatherLocation
 import com.example.weatherapp.data.network.ApiServiceI
 import com.example.weatherapp.data.network.CurrentWeatherResponse
 import kotlinx.coroutines.*
 import org.threeten.bp.ZonedDateTime
+import java.util.*
 
 class Repository(
         private val currentWeatherDao: CurrentWeatherDescDao,
-        private val dataSource: ApiServiceI
+        private val weatherLocationDao:WeatherLocationDao,
+        private val dataSource: ApiServiceI,
+        private val locationProvider: LocationProvider
 ) : RepositoryInterface {
 
     init {
@@ -23,7 +28,13 @@ class Repository(
     override suspend fun getCurrentWeather(system: UnitSystem): LiveData<CurrentWeather> {
         return withContext(Dispatchers.IO){
             initCurrentWeather(system)
-            return@withContext currentWeatherDao.getCurrentWeather().asLiveData()
+            return@withContext currentWeatherDao.getCurrentWeather()
+        }
+    }
+
+    override suspend fun getWeatherLocation(): LiveData<WeatherLocation> {
+        return withContext(Dispatchers.IO){
+            return@withContext weatherLocationDao.getCurrentLocationFromDb()
         }
     }
 
@@ -35,16 +46,33 @@ class Repository(
                     weatherResponse.weather.first().description,
                     weatherResponse.weather.first().icon)
             currentWeatherDao.insert(currentWeather)
+            val weatherLocation=WeatherLocation(
+                    weatherResponse.name,
+                    weatherResponse.dt,
+                    weatherResponse.sys.country,
+                    weatherResponse.sys.sunset,
+                    weatherResponse.sys.sunrise,
+                    weatherResponse.timezone
+                )
+            weatherLocationDao.insert(weatherLocation)
         }
     }
 
     private suspend fun initCurrentWeather(system: UnitSystem){
-        if(isNeededToFetch(ZonedDateTime.now().minusHours(1)))
+        val lastLocation=weatherLocationDao.getCurrentLocationFromDb().value
+
+        if (lastLocation==null || locationProvider.hasLocationChanged(lastLocation)){
+            fetchCurrentWeather(system)
+            return
+        }
+        if(isNeededToFetch(lastLocation.zonedTime))
             fetchCurrentWeather(system)
     }
 
     private suspend fun fetchCurrentWeather(system: UnitSystem){
-        dataSource.fetchCurrentWeather("Pavlodar", checkUnitSystem(system))
+        dataSource.fetchCurrentWeather(locationProvider.getLocation(),
+                checkUnitSystem(system),
+            Locale.getDefault().language)
     }
 
     private fun checkUnitSystem(system: UnitSystem): String{

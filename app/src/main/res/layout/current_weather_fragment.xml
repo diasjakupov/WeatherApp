@@ -30,6 +30,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/black"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
@@ -61,7 +62,8 @@
         app:layout_constraintVertical_bias="0.253"
         app:layout_constraintWidth_percent="0.25"
         tools:src="@drawable/ic_weather_sunny"
-        tools:tint="#f9a920" />
+        tools:tint="#f9a920"
+        android:contentDescription="@string/weather_icon" />
 
     <TextView
         android:id="@+id/textView_temperature"

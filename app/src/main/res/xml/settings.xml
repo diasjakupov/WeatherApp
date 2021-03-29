@@ -21,6 +21,6 @@
             android:entries="@array/unitSystemEntries"
             android:entryValues="@array/unitSystemValues"
             android:defaultValue="METRIC"
-            android:summary="Choose the unit system"/>
+            android:summary="%s"/>
     </PreferenceCategory>
 </PreferenceScreen>

@@ -6,6 +6,8 @@ import com.example.weatherapp.data.db.RoomDb
 import com.example.weatherapp.data.db.provider.UnitSystemProvider
 import com.example.weatherapp.data.db.provider.UnitSystemProviderImpl
 import com.example.weatherapp.data.network.*
+import com.example.weatherapp.data.repository.LocationProvider
+import com.example.weatherapp.data.repository.LocationProviderImpl
 import com.example.weatherapp.data.repository.Repository
 import com.example.weatherapp.data.repository.RepositoryInterface
 import com.example.weatherapp.ui.weather.current.CurrentWeatherViewModelFactory
@@ -27,7 +29,9 @@ class MyApplication() : MultiDexApplication(), KodeinAware {
         bind<ConnectivityInterface>() with singleton {ConnectivityInterceptor(instance())}
         bind() from singleton { WeatherApiBuilder.createRetrofit(instance()) }
         bind<ApiServiceI>() with singleton { ApiServiceDataSource(instance()) }
-        bind<RepositoryInterface>() with singleton { Repository(instance(), instance()) }
+        bind() from singleton { instance<RoomDb>().weatherLocationDao() }
+        bind<LocationProvider>() with singleton { LocationProviderImpl() }
+        bind<RepositoryInterface>() with singleton { Repository(instance(), instance(), instance(), instance()) }
         bind<UnitSystemProvider>() with singleton { UnitSystemProviderImpl(instance()) }
         bind() from provider { CurrentWeatherViewModelFactory(instance(), instance()) }
     }

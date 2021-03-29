@@ -8,11 +8,15 @@ import com.example.weatherapp.data.repository.RepositoryInterface
 import com.example.weatherapp.data.repository.UnitSystem
 import com.example.weatherapp.data.utils.lazyDeferred
 
-class CurrentWeatherViewModel(private val repo:Repository, private val provider:UnitSystemProvider) : ViewModel() {
+class CurrentWeatherViewModel(private val repo:Repository, provider:UnitSystemProvider) : ViewModel() {
     val unitSystem=provider.getUnitSystem()
 
     val weather by lazyDeferred {
         repo.getCurrentWeather(unitSystem)
+    }
+
+    val location by lazyDeferred {
+        repo.getWeatherLocation()
     }
 }
 

@@ -13,9 +13,9 @@ class ApiServiceDataSource(
         get() = _downloadedCurrentWeather
 
 
-    override suspend fun fetchCurrentWeather(location: String, unitSystem:String) {
+    override suspend fun fetchCurrentWeather(location: String, unitSystem:String, language:String) {
         try {
-            val currentWeather=service.getCurrentWeather(location, unitSystem).await()
+            val currentWeather=service.getCurrentWeather(location, unitSystem, language).await()
             _downloadedCurrentWeather.postValue(currentWeather)
         }catch (e:ConnectivityException){
             Log.e("Connectivity", e.toString())
