@@ -10,11 +10,11 @@
             android:disableDependentsState="true"/>
 
         <EditTextPreference
-            android:defaultValue="Pavlodar"
-            android:dependency="USE_LOCATION"
             android:key="CUSTOM_LOCATION"
-            android:summary="Type the location which will be used to get forecast weather"
-            android:title="Location" />
+            android:title="Location"
+            android:summary="The location for which the weather is displayed"
+            android:defaultValue="Los Angeles"
+            android:dependency="USE_LOCATION"/>
 
         <ListPreference android:title="Unit System"
             android:key="UNIT_SYSTEM"

@@ -6,5 +6,5 @@ import androidx.lifecycle.LiveData
 interface ApiServiceI {
     val downloadedCurrentWeather:LiveData<CurrentWeatherResponse>
 
-    suspend fun fetchCurrentWeather(location: String, unitSystem:String, language:String)
+    suspend fun fetchCurrentWeather(location: Map<String, String>, unitSystem:String, language:String)
 }

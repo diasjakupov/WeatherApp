@@ -4,7 +4,7 @@ import com.example.weatherapp.data.db.models.WeatherLocation
 
 interface LocationProvider {
 
-    fun hasLocationChanged(lastLocation:WeatherLocation):Boolean
+    suspend fun hasLocationChanged(lastLocation:WeatherLocation):Boolean
 
-    fun getLocation():String
+    suspend fun getLocation():Map<String, String>
 }

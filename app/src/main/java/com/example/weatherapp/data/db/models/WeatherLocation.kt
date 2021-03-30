@@ -15,7 +15,9 @@ data class WeatherLocation(
         val country:String,
         val sunset:Int,
         val sunrise:Int,
-        val timezone:Int
+        val timezone:Int,
+        val lon:Double,
+        val lat:Double
 ) {
     @PrimaryKey(autoGenerate = false)
     var id:Int= CURRENT_WEATHER_ID

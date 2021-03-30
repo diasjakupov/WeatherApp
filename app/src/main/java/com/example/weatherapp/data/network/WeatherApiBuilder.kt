@@ -4,6 +4,7 @@ package com.example.weatherapp.data.network
 import android.content.Context
 import android.net.ConnectivityManager
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import okhttp3.Interceptor
@@ -23,6 +24,7 @@ object WeatherApiBuilder {
                     .newBuilder()
                     .addQueryParameter("appid", API_KEY)
                     .build()
+            Log.e("TESTING", url.toString())
             val request=it.request()
                     .newBuilder()
                     .url(url)

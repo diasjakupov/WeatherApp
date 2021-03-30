@@ -49,12 +49,14 @@ class Repository(
 
             currentWeatherDao.insert(currentWeather)
             val weatherLocation=WeatherLocation(
-                    weatherResponse.name,
-                    weatherResponse.dt,
-                    weatherResponse.sys.country,
-                    weatherResponse.sys.sunset,
-                    weatherResponse.sys.sunrise,
-                    weatherResponse.timezone
+                    name=weatherResponse.name,
+                    time=weatherResponse.dt,
+                    country = weatherResponse.sys.country,
+                    sunset = weatherResponse.sys.sunset,
+                    sunrise = weatherResponse.sys.sunrise,
+                    timezone = weatherResponse.timezone,
+                    lon = weatherResponse.coord.lon,
+                    lat = weatherResponse.coord.lat
                 )
             println(weatherLocation)
             weatherLocationDao.insert(weatherLocation)
@@ -63,7 +65,6 @@ class Repository(
 
     private suspend fun initCurrentWeather(system: UnitSystem){
         val lastLocation=weatherLocationDao.getCurrentLocationNonLiveFromDb()
-
 
         if (lastLocation==null || locationProvider.hasLocationChanged(lastLocation)){
             fetchCurrentWeather(system)

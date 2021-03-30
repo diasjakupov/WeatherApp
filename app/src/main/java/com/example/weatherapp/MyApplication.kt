@@ -1,6 +1,7 @@
 package com.example.weatherapp
 
 
+import android.content.Context
 import androidx.multidex.MultiDexApplication
 import com.example.weatherapp.data.db.RoomDb
 import com.example.weatherapp.data.db.provider.UnitSystemProvider
@@ -11,6 +12,7 @@ import com.example.weatherapp.data.repository.LocationProviderImpl
 import com.example.weatherapp.data.repository.Repository
 import com.example.weatherapp.data.repository.RepositoryInterface
 import com.example.weatherapp.ui.weather.current.CurrentWeatherViewModelFactory
+import com.google.android.gms.location.LocationServices
 import com.jakewharton.threetenabp.AndroidThreeTen
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -30,7 +32,8 @@ class MyApplication() : MultiDexApplication(), KodeinAware {
         bind() from singleton { WeatherApiBuilder.createRetrofit(instance()) }
         bind<ApiServiceI>() with singleton { ApiServiceDataSource(instance()) }
         bind() from singleton { instance<RoomDb>().weatherLocationDao() }
-        bind<LocationProvider>() with singleton { LocationProviderImpl() }
+        bind() from provider { LocationServices.getFusedLocationProviderClient(instance<Context>()) }
+        bind<LocationProvider>() with singleton { LocationProviderImpl(instance(), instance()) }
         bind<RepositoryInterface>() with singleton { Repository(instance(), instance(), instance(), instance()) }
         bind<UnitSystemProvider>() with singleton { UnitSystemProviderImpl(instance()) }
         bind() from provider { CurrentWeatherViewModelFactory(instance(), instance()) }
