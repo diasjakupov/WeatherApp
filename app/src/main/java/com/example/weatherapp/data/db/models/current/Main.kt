@@ -1,9 +1,8 @@
-package com.example.weatherapp.data.db.models
+package com.example.weatherapp.data.db.models.current
 
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
+import com.example.weatherapp.data.db.models.ListConverter
 import com.google.gson.annotations.SerializedName
 
 

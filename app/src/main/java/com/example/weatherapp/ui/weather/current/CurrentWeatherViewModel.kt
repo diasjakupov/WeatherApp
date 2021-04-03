@@ -1,5 +1,6 @@
 package com.example.weatherapp.ui.weather.current
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.weatherapp.data.db.provider.UnitSystemProvider

@@ -13,8 +13,6 @@ data class WeatherLocation(
         val name:String,
         val time:Long,
         val country:String,
-        val sunset:Int,
-        val sunrise:Int,
         val timezone:Int,
         val lon:Double,
         val lat:Double

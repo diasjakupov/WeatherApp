@@ -4,19 +4,24 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
+import android.util.Log
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.example.weatherapp.data.db.const.CUSTOM_LOCATION
 import com.example.weatherapp.data.db.const.USE_LOCATION
 import com.example.weatherapp.data.db.models.WeatherLocation
 import com.example.weatherapp.data.exceptions.LocationPermissionNotGrantedException
-import com.example.weatherapp.data.utils.asDeferred
+
+import com.example.weatherapp.data.utils.asDeferredAsync
 import com.google.android.gms.location.FusedLocationProviderClient
 import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.util.jar.Manifest
 import kotlin.math.abs
 
 class LocationProviderImpl(
-        context:Context,
+        private val context:Context,
         private val fusedLocationProviderClient: FusedLocationProviderClient) :
         PreferenceProvider(context), LocationProvider {
 
@@ -31,31 +36,44 @@ class LocationProviderImpl(
 
         return deviceLocation || hasCustomLocationChanged(lastLocation)
     }
+
     override suspend fun getLocation():Map<String, String> {
+        Log.e("TESTING", "getLocation")
         if (isUsingDeviceLocation()) {
+            Log.e("TESTING", "getLocation if")
             try {
                 val deviceLocation = getLastDeviceLocation().await()
                         ?: return mapOf<String, String>("city" to "${getCustomLocationName()}")
+                Log.e("TESTING", "getLocation $deviceLocation")
                 return mapOf<String, String>("lat" to "${deviceLocation.latitude}",
                         "lon" to "${deviceLocation.longitude}")
             } catch (e: LocationPermissionNotGrantedException) {
+                Log.e("TESTING", "error")
                 return mapOf<String, String>("city" to "${getCustomLocationName()}")
             }
         }
-        else
+        else{
+            Log.e("TESTING", "getLocation not use")
             return mapOf<String, String>("city" to "${getCustomLocationName()}")
-    }
+        }
 
+    }
 
     private suspend fun hasDeviceLocationChanged(lastLocation: WeatherLocation):Boolean {
         if (!isUsingDeviceLocation())
             return false
 
         val deviceLocation = getLastDeviceLocation().await()
-                ?: return false
-
+        if(deviceLocation==null){
+            withContext(Dispatchers.Main){
+                Toast.makeText(context,
+                        "Please start Google Map to get data about your location", Toast.LENGTH_SHORT).show()
+            }
+            return false
+        }
+        Log.e("TESTING","get device")
         val comparisonThreshold = 0.03
-        return abs(deviceLocation.latitude - lastLocation.lat) > comparisonThreshold &&
+        return abs(deviceLocation.latitude - lastLocation.lat) > comparisonThreshold ||
                 abs(deviceLocation.longitude - lastLocation.lon) > comparisonThreshold
     }
 
@@ -65,9 +83,14 @@ class LocationProviderImpl(
 
     @SuppressLint("MissingPermission")
     private fun getLastDeviceLocation():Deferred<Location?>{
-        return if (hasLocationPermission()) fusedLocationProviderClient.lastLocation.asDeferred()
-        else
+        return if (hasLocationPermission()){
+            fusedLocationProviderClient.lastLocation.asDeferredAsync()
+        }
+        else{
+            Log.e("TESTING", "has no permission")
             throw LocationPermissionNotGrantedException()
+        }
+
     }
 
     private fun hasLocationPermission():Boolean{
@@ -77,7 +100,7 @@ class LocationProviderImpl(
     }
 
     private fun getCustomLocationName(): String? {
-        return preferences.getString(CUSTOM_LOCATION, "Pavlodar")
+        return preferences.getString(CUSTOM_LOCATION, "Moscow")
     }
 
     private fun hasCustomLocationChanged(lastLocation: WeatherLocation): Boolean {

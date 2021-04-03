@@ -18,7 +18,7 @@ import java.io.IOException
 object WeatherApiBuilder {
 
     fun createRetrofit(connectivityInterceptor: ConnectivityInterface):WeatherApi{
-        val interceptor=Interceptor{
+        val interceptor= Interceptor{
             val url=it.request()
                     .url()
                     .newBuilder()
@@ -31,7 +31,7 @@ object WeatherApiBuilder {
                     .build()
             return@Interceptor it.proceed(request)
         }
-        val client=OkHttpClient
+        val client= OkHttpClient
                 .Builder()
                 .addInterceptor(interceptor)
                 .addInterceptor(connectivityInterceptor)

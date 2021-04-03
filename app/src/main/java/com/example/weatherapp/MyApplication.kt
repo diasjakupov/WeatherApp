@@ -12,6 +12,7 @@ import com.example.weatherapp.data.repository.LocationProviderImpl
 import com.example.weatherapp.data.repository.Repository
 import com.example.weatherapp.data.repository.RepositoryInterface
 import com.example.weatherapp.ui.weather.current.CurrentWeatherViewModelFactory
+import com.example.weatherapp.ui.weather.future.FutureListViewModelFactory
 import com.google.android.gms.location.LocationServices
 import com.jakewharton.threetenabp.AndroidThreeTen
 import org.kodein.di.Kodein
@@ -32,11 +33,14 @@ class MyApplication() : MultiDexApplication(), KodeinAware {
         bind() from singleton { WeatherApiBuilder.createRetrofit(instance()) }
         bind<ApiServiceI>() with singleton { ApiServiceDataSource(instance()) }
         bind() from singleton { instance<RoomDb>().weatherLocationDao() }
+        bind() from singleton { instance<RoomDb>().futureLocationDao() }
         bind() from provider { LocationServices.getFusedLocationProviderClient(instance<Context>()) }
         bind<LocationProvider>() with singleton { LocationProviderImpl(instance(), instance()) }
-        bind<RepositoryInterface>() with singleton { Repository(instance(), instance(), instance(), instance()) }
+        bind<RepositoryInterface>() with singleton { Repository(
+                instance(), instance(), instance(), instance(), instance()) }
         bind<UnitSystemProvider>() with singleton { UnitSystemProviderImpl(instance()) }
-        bind() from provider { CurrentWeatherViewModelFactory(instance(), instance()) }
+        bind() from singleton { CurrentWeatherViewModelFactory(instance(), instance()) }
+        bind() from singleton { FutureListViewModelFactory(instance(), instance()) }
     }
 
     override fun onCreate() {

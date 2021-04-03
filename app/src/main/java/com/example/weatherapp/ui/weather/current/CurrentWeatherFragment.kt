@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -71,7 +72,7 @@ class CurrentWeatherFragment() : Fragment(), KodeinAware {
 
 
         bindUI()
-
+        Log.e("TESTING", "create or restart fragment")
     }
 
     private fun bindUI()=lifecycleScope.launch{
