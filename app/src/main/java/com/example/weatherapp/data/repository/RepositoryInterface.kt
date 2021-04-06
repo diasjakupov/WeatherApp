@@ -12,4 +12,6 @@ interface RepositoryInterface {
     suspend fun getWeatherLocation():LiveData<WeatherLocation>
 
     suspend fun getFutureWeather(system: UnitSystem): LiveData<List<FutureWeatherEntry>>
+
+    suspend fun getFutureWeatherByDate(date: Long, system: UnitSystem): LiveData<FutureWeatherEntry>
 }

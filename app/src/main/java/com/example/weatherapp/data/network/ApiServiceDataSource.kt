@@ -1,13 +1,22 @@
 package com.example.weatherapp.data.network
 
-import android.util.Log
+import android.content.Context
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.weatherapp.data.exceptions.ConnectivityException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import retrofit2.HttpException
 
 class ApiServiceDataSource(
-        private val service: WeatherApi
+        private val service: WeatherApi,
+        private val context:Context
 ) :ApiServiceI {
+    private val _status=MutableLiveData<CodeStatus>()
+    override val status: LiveData<CodeStatus>
+        get() = _status
+
     private val _downloadedCurrentWeather=MutableLiveData<CurrentWeatherResponse>()
     override val downloadedCurrentWeather:LiveData<CurrentWeatherResponse>
         get() = _downloadedCurrentWeather
@@ -27,8 +36,13 @@ class ApiServiceDataSource(
                 service.getCurrentWeather(location["city"]!!, unitSystem, language).await()
             }
             _downloadedCurrentWeather.postValue(currentWeather)
+            _status.postValue(CodeStatus.SUCCESS)
         }catch (e:ConnectivityException){
-            Log.e("Connectivity", e.toString())
+            _status.postValue(CodeStatus.ERROR)
+
+        }catch (e:HttpException){
+            _status.postValue(CodeStatus.ERROR)
+            showToastError(location)
         }
     }
 
@@ -40,9 +54,25 @@ class ApiServiceDataSource(
                     system = unitSystem,
                     lang = language
             ).await()
+            _status.postValue(CodeStatus.SUCCESS)
             _downloadedFutureWeatherWeather.postValue(futureWeather)
         }catch (e:ConnectivityException){
-            Log.e("Connectivity", e.toString())
+            _status.postValue(CodeStatus.ERROR)
+        }catch (e:HttpException){
+            _status.postValue(CodeStatus.ERROR)
+            showToastError()
+        }
+    }
+
+    suspend fun showToastError(location: Map<String, String>){
+        withContext(Dispatchers.Main){
+            Toast.makeText(context, "${location["city"]} is not found", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    suspend fun showToastError(){
+        withContext(Dispatchers.Main){
+            Toast.makeText(context, "NOT FOUND", Toast.LENGTH_SHORT).show()
         }
     }
 }

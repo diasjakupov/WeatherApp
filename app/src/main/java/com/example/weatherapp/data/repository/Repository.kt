@@ -12,10 +12,8 @@ import com.example.weatherapp.data.network.ApiServiceI
 import com.example.weatherapp.data.network.CurrentWeatherResponse
 import com.example.weatherapp.data.network.FutureWeatherResponse
 import kotlinx.coroutines.*
-import org.threeten.bp.LocalDate
 import org.threeten.bp.ZonedDateTime
 import java.util.*
-import kotlin.time.seconds
 
 class Repository(
         private val currentWeatherDao: CurrentWeatherDao,
@@ -28,6 +26,7 @@ class Repository(
 
     init {
         dataSource.apply {
+
             downloadedCurrentWeather.observeForever{
                 saveCurrentWeather(it)
             }
@@ -58,17 +57,28 @@ class Repository(
             val weatherLocation=weatherLocationDao.getCurrentLocationNonLiveFromDb()
             LocalUnitSystem=system
             return@withContext futureWeatherDao.getFutureWeatherList(
-                    weatherLocation.time
+                    weatherLocation.time+weatherLocation.timezone
             )
         }
     }
 
+    override suspend fun getFutureWeatherByDate(date: Long, system: UnitSystem): LiveData<FutureWeatherEntry> {
+        return withContext(Dispatchers.IO){
+            initCurrentWeather(system)
+            return@withContext futureWeatherDao.getFutureWeatherDetail(date)
+        }
+    }
+
+    private fun deleteWeather(){
+        val weatherLocation=weatherLocationDao.getCurrentLocationNonLiveFromDb()
+        if(weatherLocation!=null){
+            futureWeatherDao.deleteOldEntries()
+        }
+    }
+
     private fun saveFutureWeatherList(response:FutureWeatherResponse){
-
-
         GlobalScope.launch(Dispatchers.IO){
-            val weatherLocation=weatherLocationDao.getCurrentLocationNonLiveFromDb()
-            futureWeatherDao.deleteOldEntries(weatherLocation.time)
+            deleteWeather()
             val listOfFutureWeatherEntry= arrayListOf<FutureWeatherEntry>()
             for(day in response.daily){
                 listOfFutureWeatherEntry.add(
@@ -126,6 +136,7 @@ class Repository(
         if (lastLocation==null ||
                 locationProvider.hasLocationChanged(lastLocation) ||
                 hasUnitSystemChanged(system, nonLiveWeather)){
+            deleteWeather()
             fetchCurrentWeather(system)
             fetchFutureWeather(system)
             return
@@ -136,14 +147,15 @@ class Repository(
         }
 
         if(isNeededToFetchFuture(lastLocation.time)){
+            deleteWeather()
             fetchFutureWeather(system)
         }
     }
 
     private suspend fun fetchCurrentWeather(system: UnitSystem){
-        dataSource.fetchCurrentWeather(locationProvider.getLocation(),
-                checkUnitSystem(system),
-            Locale.getDefault().language)
+            dataSource.fetchCurrentWeather(locationProvider.getLocation(),
+                    checkUnitSystem(system),
+                    Locale.getDefault().language)
     }
 
     private suspend fun fetchFutureWeather(system: UnitSystem){

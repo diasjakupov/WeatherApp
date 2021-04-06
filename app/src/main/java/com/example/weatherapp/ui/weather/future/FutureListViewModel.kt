@@ -26,7 +26,7 @@ class FutureListViewModelFactory(
 ): ViewModelProvider.NewInstanceFactory(){
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         @Suppress("UNCHECKED_CAST")
-        return CurrentWeatherViewModel(repo as Repository, provider) as T
+        return FutureListViewModel(repo as Repository, provider) as T
     }
 
 }

@@ -109,7 +109,10 @@ class MainActivity() : AppCompatActivity(), setNavigartionTitle, KodeinAware{
         grantResults: IntArray
     ) {
         if (requestCode == MY_PERMISSION_ACCESS_COARSE_LOCATION) {
+
+
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                Log.e("TESTING", "permission")
                 bindLocationManager()
             }
             else{

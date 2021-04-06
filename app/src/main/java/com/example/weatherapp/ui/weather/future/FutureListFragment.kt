@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.Navigation
+import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.weatherapp.R
 import com.example.weatherapp.data.db.models.future.FutureWeatherEntry
@@ -86,6 +88,15 @@ class FutureListFragment : Fragment(), KodeinAware {
             layoutManager=LinearLayoutManager(this@FutureListFragment.context)
             adapter=groupAdapter
         }
+
+        groupAdapter.setOnItemClickListener { item, view ->
+            showDetailPage((item as FutureListItem).weatherEntry.dt, view)
+        }
+    }
+
+    private fun showDetailPage(date:Long, view:View){
+        val actionDetail=FutureListFragmentDirections.actionDetail(date)
+        Navigation.findNavController(view).navigate(actionDetail)
     }
 
     private fun updateActionBar(location:String, subTitle:String){

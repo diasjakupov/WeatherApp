@@ -14,12 +14,20 @@
         android:id="@+id/futureListFragment"
         android:name="com.example.weatherapp.ui.weather.future.FutureListFragment"
         android:label="7 Days"
-        tools:layout="@layout/future_list_fragment" />
+        tools:layout="@layout/future_list_fragment" >
+        <action
+            android:id="@+id/actionDetail"
+            app:destination="@id/futureDetailFragment" />
+    </fragment>
     <fragment
         android:id="@+id/futureDetailFragment"
         android:name="com.example.weatherapp.ui.weather.future.FutureDetailFragment"
         android:label="future_detail_fragment"
-        tools:layout="@layout/future_detail_fragment" />
+        tools:layout="@layout/future_detail_fragment" >
+        <argument
+            android:name="date"
+            app:argType="long" />
+    </fragment>
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.weatherapp.ui.settings.SettingsFragment"

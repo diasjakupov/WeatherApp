@@ -1,8 +1,6 @@
 package com.example.weatherapp.ui.weather.current
 
 import android.annotation.SuppressLint
-import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -11,12 +9,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
 import com.example.weatherapp.R
 import com.example.weatherapp.data.network.GlideApp
 import com.example.weatherapp.data.repository.UnitSystem
@@ -72,7 +67,6 @@ class CurrentWeatherFragment() : Fragment(), KodeinAware {
 
 
         bindUI()
-        Log.e("TESTING", "create or restart fragment")
     }
 
     private fun bindUI()=lifecycleScope.launch{
@@ -85,7 +79,6 @@ class CurrentWeatherFragment() : Fragment(), KodeinAware {
             if(it != null){
                 updateActionBar(it.name, "Today")
             }
-
         })
 
 
@@ -100,6 +93,9 @@ class CurrentWeatherFragment() : Fragment(), KodeinAware {
                 getBitMapIcon("http://openweathermap.org/img/wn/${it.icon}@2x.png")
             }
         })
+
+
+
     }
     private fun getBitMapIcon(url:String){
         GlideApp.with(this@CurrentWeatherFragment)

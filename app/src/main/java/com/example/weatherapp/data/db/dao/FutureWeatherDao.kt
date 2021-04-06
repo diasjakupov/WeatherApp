@@ -15,9 +15,15 @@ interface FutureWeatherDao {
     @Query("SELECT * FROM future_weather WHERE dt >= :date")
     fun getFutureWeatherList(date:Long):LiveData<List<FutureWeatherEntry>>
 
+    @Query("SELECT * FROM future_weather WHERE dt=:date")
+    fun getFutureWeatherDetail(date:Long): LiveData<FutureWeatherEntry>
+
     @Query("select count(id) from future_weather where dt >= :date")
     fun countFutureWeather(date:Long): Int
 
     @Query("delete from future_weather where dt < :date")
     fun deleteOldEntries(date:Long)
+
+    @Query("delete from future_weather")
+    fun deleteOldEntries()
 }
